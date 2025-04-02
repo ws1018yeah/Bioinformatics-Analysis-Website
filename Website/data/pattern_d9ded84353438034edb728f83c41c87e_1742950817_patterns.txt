@@ -1,0 +1,34 @@
+########################################
+# Program: patmatmotifs
+# Rundate: Wed 26 Mar 2025 01:00:17
+# Commandline: patmatmotifs
+#    -sequence /localdisk/home/s2682415/public_html/Website/data/pattern_d9ded84353438034edb728f83c41c87e_1742950817.fasta
+#    -outfile /home/s2682415/public_html/Website/data/pattern_d9ded84353438034edb728f83c41c87e_1742950817_patterns.txt
+# Report_format: dbmotif
+# Report_file: /home/s2682415/public_html/Website/data/pattern_d9ded84353438034edb728f83c41c87e_1742950817_patterns.txt
+########################################
+
+#=======================================
+#
+# Sequence: NP_001335918.1     from: 1   to: 655
+# HitCount: 1
+#
+# Full: No
+# Prune: Yes
+# Data_file: /usr/share/EMBOSS/data/PROSITE/prosite.lines
+#
+#=======================================
+
+Length = 8
+Start = position 80 of sequence
+End = position 87 of sequence
+
+Motif = ATP_GTP_A
+
+LNAILGPTGGGKSSLLDV
+     |      |
+    80      87
+
+
+#---------------------------------------
+#---------------------------------------
