@@ -29,16 +29,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html>
 <head>
     <title>登录</title>
-    <link rel="stylesheet" href="assets/css/style2.css">
+    <link rel="stylesheet" href="assets/css/style4.css">
 </head>
 <body>
-    <h2>用户登录</h2>
-    <?php if(isset($error)) echo "<p class='error'>$error</p>"; ?>
-    <form method="post">
-        邮箱：<input type="email" name="email" required><br>
-        密码：<input type="password" name="password" required><br>
-        <button type="submit">登录</button>
-    </form>
-    <p>还没有账户？ <a href="register.php">立即注册</a></p>
+    <div class="login-container">
+        <div class="form-wrapper"> <!-- 新增表单容器 -->
+            <h2>用户登录</h2>
+            <?php if(isset($error)) echo "<p class='error'>$error</p>"; ?>
+            <form method="post">
+                <div class="form-group">
+                    <label for="email">邮箱：</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">密码：</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">登录</button>
+            </form>
+            <p class="register-link">还没有账户？ <a href="register.php">立即注册</a></p>
+        </div>
+    </div>
 </body>
 </html>

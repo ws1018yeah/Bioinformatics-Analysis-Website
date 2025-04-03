@@ -63,7 +63,9 @@ include(__DIR__ . '/config/config.php');
     <!-- 页脚 -->
     <footer>
         <hr>
-        <p><a href="copyright.php">版权声明页面</a></p>
+        <p><a href="copyright.php">版权声明页面</a>
+        <a href="https://github.com/ws1018yeah/Bioinformatics-Analysis-Website" target="_blank">GitHub项目仓库</a>
+        </p>
     </footer>
 </body>
 </html>
