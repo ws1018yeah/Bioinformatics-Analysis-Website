@@ -1,6 +1,6 @@
 ########################################
 # Program: patmatmotifs
-# Rundate: Wed 26 Mar 2025 00:59:59
+# Rundate: Thu  3 Apr 2025 03:14:20
 # Commandline: patmatmotifs
 #    -sequence /home/s2682415/public_html/Website/data/ABC_transporter_Mammalia.fasta
 #    -outfile /home/s2682415/public_html/Website/data/ABC_transporter_Mammalia_patterns.txt

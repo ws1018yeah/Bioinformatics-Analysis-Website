@@ -41,10 +41,11 @@ include(__DIR__ . '/config/config.php');
 
             <div class="form-group">
                 <label for="email">邮箱：</label>
-                <input type="email" id="email" name="email"  required>
+                <input type="email" id="email" name="email" required>
             </div>
 
             <button type="submit"><?php echo isset($_SESSION['user_id']) ? '开始分析' : '开始分析（访客模式）' ?></button>
+            <button type="button" id="fill-sample-data" style="margin-left: 10px;">使用示例数据</button>
         </form>
 
         <!-- 下一步分析 -->
@@ -67,5 +68,13 @@ include(__DIR__ . '/config/config.php');
         <a href="https://github.com/ws1018yeah/Bioinformatics-Analysis-Website" target="_blank">GitHub项目仓库</a>
         </p>
     </footer>
+
+    <script>
+        document.getElementById("fill-sample-data").addEventListener("click", function() {
+            document.getElementById("protein_family").value = "glucose-6-phosphatase";  // 示例蛋白质家族
+            document.getElementById("taxonomy").value = "Aves";  // 示例生物分类
+            document.getElementById("email").value = "15268163017@163.com";  // 示例邮箱
+        });
+    </script>
 </body>
 </html>

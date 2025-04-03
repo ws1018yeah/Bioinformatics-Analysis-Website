@@ -8,9 +8,11 @@ session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // 过滤和转义用户输入
-    $protein_family = trim($_POST['protein_family']);
-    $taxonomy = trim($_POST['taxonomy']);
+    //$protein_family = trim($_POST['protein_family']);
+    //$taxonomy = trim($_POST['taxonomy']);
     $email = trim($_POST['email']);
+    $protein_family = preg_replace('/[^A-Za-z0-9_-]/', '', trim($_POST['protein_family']));
+    $taxonomy = preg_replace('/[^A-Za-z0-9_-]/', '', trim($_POST['taxonomy']));
 
     // 不在这里替换空格，Python 脚本内部会处理
     $pf_arg = escapeshellarg($protein_family);
