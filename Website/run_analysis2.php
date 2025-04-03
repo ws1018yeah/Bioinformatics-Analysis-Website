@@ -1,68 +1,74 @@
-<?php
-// 引入数据库配置
+<?php 
+// Include database configuration
 include(__DIR__ . '/config/config.php');
-// 加载专用于分析流程的配置文件 config2.php
+// Load additional configuration for the analysis process
 include(__DIR__ . '/config2.php');
-// 新增Session启动
+// Start session
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // 过滤和转义用户输入
-    //$protein_family = trim($_POST['protein_family']);
-    //$taxonomy = trim($_POST['taxonomy']);
+    // Sanitize and escape user input
     $email = trim($_POST['email']);
     $protein_family = preg_replace('/[^A-Za-z0-9_-]/', '', trim($_POST['protein_family']));
     $taxonomy = preg_replace('/[^A-Za-z0-9_-]/', '', trim($_POST['taxonomy']));
 
-    // 不在这里替换空格，Python 脚本内部会处理
+    // Do not replace spaces here, Python script will handle it internally
     $pf_arg = escapeshellarg($protein_family);
     $tax_arg = escapeshellarg($taxonomy);
     $email_arg = escapeshellarg($email);
 
-    // 构造命令，追加 2>&1 捕获标准错误
+    // Construct command and append 2>&1 to capture standard errors
     $command = "$PYTHON_EXE $PYTHON_SCRIPT $pf_arg $tax_arg $email_arg 2>&1";
 
-    // 输出调试信息（便于排查问题）
-    echo "<html><head><title>Protein Analysis Results</title></head><body>";
-    echo "<h2>Protein Analysis Results</h2>";
-    echo "<p><strong>Debug Info:</strong></p>";
-    echo "<p>Python executable: " . htmlspecialchars($PYTHON_EXE) . "</p>";
-    echo "<p>Python script: " . htmlspecialchars($PYTHON_SCRIPT) . "</p>";
-    echo "<p>Command: " . htmlspecialchars($command) . "</p>";
-
-    // 执行命令并捕获返回信息
+    // Execute command and capture output
     exec($command, $output, $return_var);
 
-    echo "<p>Return Code: " . $return_var . "</p>";
-    echo "<h3>Execution Log:</h3>";
-    echo "<pre>";
-    foreach ($output as $line) {
-        echo htmlspecialchars($line) . "\n";
-    }
-    echo "</pre>";
+    echo "<html><head><title>Protein Analysis Results</title>";
+    echo "<style>
+            body { font-family: Arial, sans-serif; background: #f7f9fc; padding: 20px; }
+            h2 { color: #1E3D7B; font-size: 32px; text-align: center; }
+            .result { text-align: center; margin-top: 30px; }
+            .result p { font-size: 18px; }
+            .button { 
+                background-color: #1E3D7B; 
+                color: white; 
+                padding: 10px 20px; 
+                font-size: 18px; 
+                border: none; 
+                border-radius: 6px; 
+                cursor: pointer;
+                text-decoration: none; 
+                margin-top: 20px;
+            }
+            .button:hover { background-color: #3f5c9d; }
+          </style>";
+    echo "</head><body>";
 
-    // 定义硬编码的目录和构造文件路径
-    $data_dir_abs = "/home/s2682415/public_html/Website/data";
-    $family_clean = preg_replace("/[^A-Za-z0-9_\\-]/", "_", $protein_family);
-    $taxonomy_clean = preg_replace("/[^A-Za-z0-9_\\-]/", "_", $taxonomy);
-
-    // 后端文件系统路径
-    $fasta_file_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}.fasta";
-    $patterns_file_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}_patterns.txt";
-    $plotcon_file_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}_plotcon.png";
-    $aligned_file_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}_aligned.aln";
-    $similarity_matrix_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}_similarity.mat";
-    $heatmap_file_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}_similarity_heatmap.png";
-
-    // 用于生成网页链接的相对路径（相对于网站根目录 /home/s2682415/public_html/Website/）
-    $fasta_file_url = "data/{$family_clean}_{$taxonomy_clean}.fasta";
-    $patterns_file_url = "data/{$family_clean}_{$taxonomy_clean}_patterns.txt";
-    $plotcon_file_url = "data/{$family_clean}_{$taxonomy_clean}_plotcon.png";
-    $aligned_file_url = "data/{$family_clean}_{$taxonomy_clean}_aligned.aln";
-    $similarity_matrix_url = "data/{$family_clean}_{$taxonomy_clean}_similarity.mat";
-    $heatmap_file_url = "data/{$family_clean}_{$taxonomy_clean}_similarity_heatmap.png";
+    // Add the title for the results page
+    echo "<h2>Protein Analysis Results</h2>";  // Add title here
 
     if ($return_var === 0) {
+        // Define absolute directory path and construct file paths
+        $data_dir_abs = "/home/s2682415/public_html/Website/data";
+        $family_clean = preg_replace("/[^A-Za-z0-9_\-]/", "_", $protein_family);
+        $taxonomy_clean = preg_replace("/[^A-Za-z0-9_\-]/", "_", $taxonomy);
+
+        // Backend file system paths
+        $fasta_file_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}.fasta";
+        $patterns_file_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}_patterns.txt";
+        $plotcon_file_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}_plotcon.png";
+        $aligned_file_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}_aligned.aln";
+        $similarity_matrix_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}_similarity.mat";
+        $heatmap_file_abs = "$data_dir_abs/{$family_clean}_{$taxonomy_clean}_similarity_heatmap.png";
+
+        // Relative paths for web links
+        $fasta_file_url = "data/{$family_clean}_{$taxonomy_clean}.fasta";
+        $patterns_file_url = "data/{$family_clean}_{$taxonomy_clean}_patterns.txt";
+        $plotcon_file_url = "data/{$family_clean}_{$taxonomy_clean}_plotcon.png";
+        $aligned_file_url = "data/{$family_clean}_{$taxonomy_clean}_aligned.aln";
+        $similarity_matrix_url = "data/{$family_clean}_{$taxonomy_clean}_similarity.mat";
+        $heatmap_file_url = "data/{$family_clean}_{$taxonomy_clean}_similarity_heatmap.png";
+
         echo "<h3>Output Files:</h3>";
         echo "<ul>";
         echo file_exists($fasta_file_abs) ? "<li><a href='$fasta_file_url' target='_blank'>FASTA Sequences</a></li>" : "<li>FASTA Sequences file not found.</li>";
@@ -73,17 +79,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo file_exists($heatmap_file_abs) ? "<li><a href='$heatmap_file_url' target='_blank'>Similarity Heatmap</a></li>" : "<li>Similarity Heatmap file not found.</li>";
         echo "</ul>";
 
-        // 将分析记录保存到数据库中
+        // Save analysis records to the database
         $analysis_log = implode("\n", $output);
         try {
             $sql = "INSERT INTO analysis_results (protein_family, taxonomy, email, fasta_file, patterns_file, plotcon_file, aligned_file, similarity_matrix, heatmap_file, analysis_log, created_at, user_id, session_id)
                     VALUES (:protein_family, :taxonomy, :email, :fasta_file, :patterns_file, :plotcon_file, :aligned_file, :similarity_matrix, :heatmap_file, :analysis_log, NOW(), :user_id, :session_id)";
             $stmt = $pdo->prepare($sql);
             
-            // 如果用户登录，则设置 user_id，否则设置为 NULL
+            // Set user_id if logged in, otherwise set to NULL
             $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
             
-            // 获取当前会话ID
+            // Get current session ID
             $session_id = session_id();
             
             $stmt->execute([
@@ -109,7 +115,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "<p>Please check the above log for details.</p>";
     }
 
-    echo "<p><a href='index2.php'>Return to Home</a></p>";
+    // Add the "Return to Home" button
+    echo "<div class='result'><a href='index2.php' class='button'>Return to Home</a></div>";
     echo "</body></html>";
 } else {
     header("Location: index2.php");

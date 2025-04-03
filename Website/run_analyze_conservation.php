@@ -1,56 +1,63 @@
-<?php
-// 引入数据库配置
+<?php  
+// Include database configuration
 include(__DIR__ . '/config/config.php');
 include(__DIR__ . '/config2.php');
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // 获取用户粘贴的FASTA序列
+    // Retrieve user-pasted FASTA sequence
     $fasta_sequence = trim($_POST['fasta_sequence']);
     
-    // 获取过滤选项
+    // Retrieve filtering options
     $taxonomy_filter = isset($_POST['taxonomy_filter']) ? trim($_POST['taxonomy_filter']) : '';
     $min_length = isset($_POST['min_length']) ? intval($_POST['min_length']) : 0;
     $max_length = isset($_POST['max_length']) ? intval($_POST['max_length']) : 0;
     $max_count = isset($_POST['max_count']) ? intval($_POST['max_count']) : 0;
 
-    // 保存FASTA序列到 data 目录
+    // Save FASTA sequence to the data directory
     $data_dir = __DIR__ . '/data';
     if (!is_dir($data_dir)) {
         mkdir($data_dir, 0755, true);
     }
-    // 生成唯一文件名
+    // Generate a unique filename
     $fasta_filename = 'conservation_' . session_id() . '_' . time() . '.fasta';
     $fasta_path = $data_dir . '/' . $fasta_filename;
     file_put_contents($fasta_path, $fasta_sequence);
 
-    // 构造 Python 命令，传递过滤参数
-    $command = "$PYTHON_EXE " . __DIR__ . "/scripts/analyze_conservation.py $fasta_path " .
+    // Construct Python command, passing filter parameters
+    $command = "$PYTHON_EXE " . __DIR__ . "/scripts/analyze_conservation.py $fasta_path " . 
                escapeshellarg($taxonomy_filter) . " " . $min_length . " " . $max_length . " " . $max_count . " 2>&1";
 
-    // 输出调试信息
-    echo "<html><head><title>Conservation Analysis Results</title></head><body>";
-    echo "<h2>Conservation Analysis Results</h2>";
-    echo "<p><strong>Debug Info:</strong></p>";
-    echo "<p>Python executable: " . htmlspecialchars($PYTHON_EXE) . "</p>";
-    echo "<p>Python script: " . htmlspecialchars(__DIR__ . "/scripts/analyze_conservation.py") . "</p>";
-    echo "<p>Command: " . htmlspecialchars($command) . "</p>";
-
-    // 执行命令并捕获返回信息
+    // Execute command and capture output
     exec($command, $output, $return_var);
 
-    echo "<p>Return Code: " . $return_var . "</p>";
-    echo "<h3>Execution Log:</h3>";
-    echo "<pre>";
-    foreach ($output as $line) {
-        echo htmlspecialchars($line) . "\n";
-    }
-    echo "</pre>";
+    echo "<html><head><title>Conservation Analysis Results</title>";
+    echo "<style>
+            body { font-family: Arial, sans-serif; background: #f7f9fc; padding: 20px; }
+            h2 { color: #1E3D7B; font-size: 32px; text-align: center; }
+            .result { text-align: center; margin-top: 30px; }
+            .result p { font-size: 18px; }
+            .button { 
+                background-color: #1E3D7B; 
+                color: white; 
+                padding: 10px 20px; 
+                font-size: 18px; 
+                border: none; 
+                border-radius: 6px; 
+                cursor: pointer;
+                text-decoration: none; 
+                margin-top: 20px;
+            }
+            .button:hover { background-color: #3f5c9d; }
+          </style>";
+    echo "</head><body>";
+
+    // Add the title for the results page
+    echo "<h2>Conservation Analysis Results</h2>";  // Add title here
 
     if ($return_var === 0) {
-        // 根据是否传入过滤选项来构造预期的输出文件名称
+        // Construct expected output file name based on filter options
         if ($taxonomy_filter || $min_length || $max_length || $max_count) {
-            // 如果有过滤，则输出文件名会在原始文件名中增加 _filtered
             $expected_file = str_replace(".fasta", "_filtered_plotcon.png", $fasta_filename);
         } else {
             $expected_file = str_replace(".fasta", "_plotcon.png", $fasta_filename);
@@ -58,10 +65,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $plotcon_file_abs = $data_dir . '/' . $expected_file;
         
         if (file_exists($plotcon_file_abs)) {
-            // 构造输出文件的 URL
+            // Construct output file URL
             $plotcon_file_url = "https://bioinfmsc8.bio.ed.ac.uk/~s2682415/Website/data/" . $expected_file;
             
-            // 将分析记录保存到数据库中
+            // Save analysis log to the database
             $analysis_log = implode("\n", $output);
             try {
                 $sql = "INSERT INTO analyze_conservation_results (plotcon_file, analysis_log, created_at, user_id, session_id, fasta_file)
@@ -78,12 +85,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     ':session_id' => $session_id,
                     ':fasta_file' => 'data/' . $fasta_filename
                 ]);
+                echo "<div class='result'>";
                 echo "<p>Data successfully inserted into the database.</p>";
             } catch (PDOException $e) {
                 echo "<p>Error inserting data: " . htmlspecialchars($e->getMessage()) . "</p>";
             }
 
-            // 从数据库中读取当前会话最新的分析记录，并展示输出文件链接
+            // Retrieve the latest analysis record from the database and display the output file link
             try {
                 $sql = "SELECT plotcon_file FROM analyze_conservation_results WHERE session_id = :session_id ORDER BY created_at DESC LIMIT 1";
                 $stmt = $pdo->prepare($sql);
@@ -100,16 +108,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } catch (PDOException $e) {
                 echo "<p>Error reading from database: " . htmlspecialchars($e->getMessage()) . "</p>";
             }
+            echo "</div>";
         } else {
             echo "<p>Conservation Analysis Plot not found.</p>";
         }
     } else {
         echo "<h2>Error occurred during analysis</h2>";
         echo "<p>Conservation Analysis Plot not found.</p>";
-        echo "<p>Please check the above log for details.</p>";
+        echo "<p>Please check the log above for details.</p>";
     }
 
-    echo "<p><a href='index2.php'>Return to Home</a></p>";
+    // Add the "Return to Home" button
+    echo "<div class='result'><a href='index2.php' class='button'>Return to Home</a></div>";
     echo "</body></html>";
 } else {
     header("Location: index2.php");

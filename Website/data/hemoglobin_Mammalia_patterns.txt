@@ -1,0 +1,34 @@
+########################################
+# Program: patmatmotifs
+# Rundate: Thu  3 Apr 2025 15:04:17
+# Commandline: patmatmotifs
+#    -sequence /home/s2682415/public_html/Website/data/hemoglobin_Mammalia.fasta
+#    -outfile /home/s2682415/public_html/Website/data/hemoglobin_Mammalia_patterns.txt
+# Report_format: dbmotif
+# Report_file: /home/s2682415/public_html/Website/data/hemoglobin_Mammalia_patterns.txt
+########################################
+
+#=======================================
+#
+# Sequence: QJF11776.1     from: 1   to: 147
+# HitCount: 1
+#
+# Full: No
+# Prune: Yes
+# Data_file: /usr/share/EMBOSS/data/PROSITE/prosite.lines
+#
+#=======================================
+
+Length = 4
+Start = position 64 of sequence
+End = position 67 of sequence
+
+Motif = AMIDATION
+
+AQVKAHGKKVIHAF
+     |  |
+    64  67
+
+
+#---------------------------------------
+#---------------------------------------

@@ -1,0 +1,35 @@
+########################################
+# Program: patmatmotifs
+# Rundate: Thu  3 Apr 2025 02:29:48
+# Commandline: patmatmotifs
+#    -sequence /localdisk/home/s2682415/public_html/Website/data/pattern_bca83e44d31d871a9a8b8afe8f0b5005_1743643787.fasta
+#    -outfile /home/s2682415/public_html/Website/data/pattern_bca83e44d31d871a9a8b8afe8f0b5005_1743643787_patterns.txt
+#    -auto
+# Report_format: dbmotif
+# Report_file: /home/s2682415/public_html/Website/data/pattern_bca83e44d31d871a9a8b8afe8f0b5005_1743643787_patterns.txt
+########################################
+
+#=======================================
+#
+# Sequence: KAJ7421106.1     from: 1   to: 358
+# HitCount: 1
+#
+# Full: No
+# Prune: Yes
+# Data_file: /usr/share/EMBOSS/data/PROSITE/prosite.lines
+#
+#=======================================
+
+Length = 4
+Start = position 139 of sequence
+End = position 142 of sequence
+
+Motif = AMIDATION
+
+LLSAAGGKKQSRTL
+     |  |
+   139  142
+
+
+#---------------------------------------
+#---------------------------------------

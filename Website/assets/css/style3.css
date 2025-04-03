@@ -1,4 +1,4 @@
-/* ========== 全局基础样式 ========== */ 
+/* ========== Global Basic Styles ========== */
 html, body {
     margin: 0;
     padding: 0;
@@ -7,7 +7,8 @@ html, body {
     color: #333;
     line-height: 1.6;
 }
-/* ========== 按钮式导航链接 ========== */
+
+/* ========== Button-style Navigation Links ========== */
 .div-button-container {
     text-align: center;
     margin-bottom: 20px;
@@ -17,24 +18,23 @@ html, body {
     display: inline-block;
     padding: 12px 20px;
     margin: 5px;
-    font-size: 18px; /* 字号增大 */
+    font-size: 18px; /* Larger font size */
     font-weight: 600;
     color: #fff;
-    background-color: #1E3D7B; /* 深蓝色背景 */
-    border-radius: 6px; /* 圆角 */
+    background-color: #1E3D7B; /* Dark blue background */
+    border-radius: 6px; /* Rounded corners */
     text-decoration: none;
     transition: all 0.3s ease;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .div-button-container a:hover {
-    background-color: #3f5c9d; /* 鼠标悬停时颜色变化 */
-    transform: scale(1.05); /* 轻微放大 */
+    background-color: #3f5c9d; /* Change color on hover */
+    transform: scale(1.05); /* Slight enlargement */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-
-/* ========== 顶部标题 ========== */
+/* ========== Top Title ========== */
 h2 {
     margin: 0;
     padding: 20px 0;
@@ -47,7 +47,7 @@ h2 {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* ========== 导航栏 ========== */
+/* ========== Navigation Bar ========== */
 nav {
     display: flex;
     justify-content: center;
@@ -70,7 +70,7 @@ nav a:hover {
     color: #3f5c9d;
 }
 
-/* ========== 按钮动画效果 ========== */
+/* ========== Button Animation Effect ========== */
 button {
     background-color: #1E3D7B;
     color: #fff;
@@ -87,7 +87,7 @@ button:hover {
     transform: scale(1.05);
 }
 
-/* ========== 表格样式 ========== */
+/* ========== Table Styles ========== */
 table {
     width: 90%;
     margin: 20px auto;
@@ -108,7 +108,7 @@ table th {
     color: white;
 }
 
-/* ========== 过渡动画 ========== */
+/* ========== Transition Animation ========== */
 td a {
     text-decoration: none;
     color: #1E3D7B;
@@ -120,7 +120,7 @@ td a:hover {
     font-weight: bold;
 }
 
-/* ========== 页脚 ========== */
+/* ========== Footer ========== */
 footer {
     margin-top: 30px;
     text-align: center;
@@ -133,7 +133,7 @@ footer p {
     font-size: 14px;
 }
 
-/* ========== 响应式适配 ========== */
+/* ========== Responsive Adaptation ========== */
 @media (max-width: 768px) {
     nav a {
         margin: 0 8px;

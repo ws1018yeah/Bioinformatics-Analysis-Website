@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import subprocess
 import sys
 import os
@@ -11,10 +10,7 @@ CLUSTALO = "/usr/bin/clustalo"
 
 def generate_similarity_matrix(fasta_file):
     try:
-        #matrix_file = fasta_file.replace(".fasta", "_similarity.mat")
-        #heatmap_file = fasta_file.replace(".fasta", "_similarity_heatmap.png")
-
-        # 修改为动态路径（与PHP一致）
+        # 动态生成输出文件名
         base = os.path.basename(fasta_file)
         root = os.path.splitext(base)[0]
         matrix_file = os.path.join(DATA_DIR, f"{root}_similarity.mat")
@@ -24,15 +20,18 @@ def generate_similarity_matrix(fasta_file):
         command = [CLUSTALO, "-i", fasta_file, "--distmat-out", matrix_file, "--full", "--percent-id", "--force"]
         subprocess.run(command, cwd=DATA_DIR, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
 
-        # 读取矩阵文件，跳过第一行和第一列
+        # 读取矩阵文件
         matrix = []
+        seq_ids = []
         with open(matrix_file, 'r') as file:
             lines = file.readlines()
-            for line in lines[1:]:  # 跳过第一行
+            # 第一行是序列数量（跳过）
+            for line in lines[1:]:  # 从第二行开始读取序列ID和数据
                 parts = line.strip().split()
                 if len(parts) < 2:
                     continue
-                row = [float(x) for x in parts[1:]]  # 跳过第一列（序列 ID）
+                seq_ids.append(parts[0])  # 第一列为序列ID
+                row = [float(x) for x in parts[1:]]  # 后续列为相似性数据
                 matrix.append(row)
 
         if not matrix:
@@ -41,15 +40,24 @@ def generate_similarity_matrix(fasta_file):
 
         matrix = np.array(matrix)
 
-        plt.figure(figsize=(8, 6))
-        plt.imshow(matrix, cmap="YlGnBu", aspect="auto")
-        plt.colorbar(label="Similarity (%)")
-        plt.title("Sequence Similarity Heatmap")
-        plt.xlabel("Sequence")
-        plt.ylabel("Sequence")
-        plt.xticks([])  
-        plt.yticks([])
-        plt.savefig(heatmap_file)
+        # 设置图形参数
+        plt.figure(figsize=(12, 10))
+        plt.rcParams.update({'font.size': 8})  # 调整字体大小
+
+        # 生成热图
+        heatmap = plt.imshow(matrix, cmap="YlGnBu", aspect="auto")
+        plt.colorbar(heatmap, label="Similarity (%)")
+
+        # 设置刻度标签
+        plt.xticks(np.arange(len(seq_ids)), seq_ids, rotation=45, ha='right')
+        plt.yticks(np.arange(len(seq_ids)), seq_ids, rotation=0, va='center')
+
+        # 添加标题并调整布局
+        plt.title("Sequence Similarity Heatmap", pad=20)
+        plt.tight_layout()  # 防止标签被截断
+
+        # 保存文件
+        plt.savefig(heatmap_file, bbox_inches='tight', dpi=300)
         plt.close()
         print(f"✅ Similarity matrix and heatmap saved to {matrix_file} and {heatmap_file}")
 

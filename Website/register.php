@@ -1,9 +1,9 @@
-<?php
-ob_start(); // 新增：启用输出缓冲
+<?php 
+ob_start(); // New: Enable output buffering
 session_start();
 include(__DIR__ . '/config/config.php');
 
-$error = null; // 初始化错误变量
+$error = null; // Initialize error variable
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
@@ -11,29 +11,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = trim($_POST['email']);
         $password = $_POST['password'];
         
-        // 新增空值验证
+        // New: Validate non-empty fields
         if (empty($username) || empty($email) || empty($password)) {
-            throw new Exception("所有字段都必须填写");
+            throw new Exception("All fields must be filled");
         }
 
-        // 检查邮箱格式
+        // Check email format
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            throw new Exception("邮箱格式无效");
+            throw new Exception("Invalid email format");
         }
 
-        // 检查邮箱是否已存在（优化查询语句）
+        // Check if email already exists (optimized query)
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
         $stmt->execute([$email]);
         if ($stmt->fetchColumn() > 0) {
-            throw new Exception("该邮箱已被注册");
+            throw new Exception("This email is already registered");
         }
 
-        // 密码强度验证（新增）
+        // Password strength validation (new)
         if (strlen($password) < 8) {
-            throw new Exception("密码至少需要8个字符");
+            throw new Exception("Password must be at least 8 characters long");
         }
 
-        // 创建用户（使用事务保障数据一致性）
+        // Create user (use transactions to ensure data consistency)
         $pdo->beginTransaction();
         try {
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
@@ -45,52 +45,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             $pdo->commit();
             
-            // 在跳转前清理缓冲区
-            ob_end_clean(); // 新增：清空输出缓冲区
+            // Clean the buffer before redirecting
+            ob_end_clean(); // New: Clean output buffer
             header("Location: index2.php");
             exit();
             
         } catch (Exception $e) {
             $pdo->rollBack();
-            throw $e; // 重新抛出异常
+            throw $e; // Re-throw exception
         }
         
     } catch (Exception $e) {
         $error = $e->getMessage();
-        ob_end_clean(); // 新增：发生错误时清理缓冲区
+        ob_end_clean(); // New: Clean buffer when an error occurs
     }
 }
-// 结束PHP代码块后再输出HTML
+// Output HTML after PHP code ends
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>注册</title>
+    <title>Register</title>
     <link rel="stylesheet" href="assets/css/style4.css">
 </head>
 <body>
     <div class="login-container">
         <div class="form-wrapper">
-            <h2>注册新账户</h2>
+            <h2>Register New Account</h2>
             <?php if(isset($error)): ?>
                 <p class='error'><?php echo htmlspecialchars($error) ?></p>
             <?php endif; ?>
             <form method="post">
                 <div class="form-group">
-                    <label for="username">用户名：</label>
+                    <label for="username">Username:</label>
                     <input type="text" id="username" name="username" required>
                 </div>
                 <div class="form-group">
-                    <label for="email">邮箱：</label>
+                    <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">密码：</label>
+                    <label for="password">Password:</label>
                     <input type="password" id="password" name="password" required minlength="8">
                 </div>
-                <button type="submit">注册</button>
+                <button type="submit">Register</button>
             </form>
-            <p class="register-link">已有账户？ <a href="login.php">立即登录</a></p>
+            <p class="register-link">Already have an account? <a href="login.php">Login now</a></p>
         </div>
     </div>
 </body>

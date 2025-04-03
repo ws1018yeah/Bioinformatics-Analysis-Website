@@ -7,30 +7,30 @@ try {
     $table = isset($_GET['table']) ? $_GET['table'] : 'analysis_results';
     
     if (isset($_SESSION['user_id'])) {
-        // 如果用户登录，查询 user_id 对应的记录
+        // If the user is logged in, query records corresponding to user_id
         $stmt = $pdo->prepare("SELECT * FROM $table WHERE user_id = ? ORDER BY created_at DESC");
         $stmt->execute([$_SESSION['user_id']]);
         $results = $stmt->fetchAll();
     } else {
-        // 如果用户未登录，查询 session_id 对应的记录
+        // If the user is not logged in, query records corresponding to session_id
         $stmt = $pdo->prepare("SELECT * FROM $table WHERE session_id = ? ORDER BY created_at DESC");
         $stmt->execute([session_id()]);
         $results = $stmt->fetchAll();
     }
 } catch (PDOException $e) {
-    die("数据库错误: " . $e->getMessage());
+    die("Database error: " . $e->getMessage());
 }
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>分析记录</title>
+    <title>Analysis Records</title>
     <link rel="stylesheet" href="assets/css/style3.css">
     <script>
         function confirmDelete(table, id) {
-            if (confirm("确定要删除这条记录吗？")) {
-                // 用户确认删除，提交表单
+            if (confirm("Are you sure you want to delete this record?")) {
+                // User confirms deletion, submit the form
                 var form = document.createElement('form');
                 form.action = 'delete_record.php';
                 form.method = 'POST';
@@ -55,28 +55,28 @@ try {
     </script>
 </head>
 <body>
-    <h2>分析历史记录</h2>
+    <h2>Analysis History</h2>
     
-    <!-- 添加按钮切换不同表 -->
+    <!-- Add buttons to switch between different tables -->
     <div class="div-button-container">
-        <a href="view_results2.php?table=analysis_results">所有分析记录</a> | 
-        <a href="conservation_results.php">保守性分析记录</a> | 
-        <a href="generate_similarity_matrix_results.php">相似性矩阵记录</a> | 
-        <a href="multiple_sequence_alignment_results.php">多序列比对记录</a> | 
-        <a href="pattern_scan_results.php">模式扫描记录</a>
-        <a href="index2.php">返回主页</a>
+        <a href="view_results2.php?table=analysis_results">All Analysis Records</a> | 
+        <a href="conservation_results.php">Conservation Analysis Records</a> | 
+        <a href="generate_similarity_matrix_results.php">Similarity Matrix Records</a> | 
+        <a href="multiple_sequence_alignment_results.php">Multiple Sequence Alignment Records</a> | 
+        <a href="pattern_scan_results.php">Pattern Scan Records</a>
+        <a href="index2.php">Return to Home</a>
     </div>
 
     <?php if (empty($results)): ?>
-        <p>没有找到历史记录<?php if (!isset($_SESSION['user_id'])) echo "，请登录后查看账户记录"; ?></p>
+        <p>No records found<?php if (!isset($_SESSION['user_id'])) echo ", please log in to view account records"; ?></p>
     <?php else: ?>
         <table>
             <tr>
-                <th>时间</th>
-                <th>蛋白质家族</th>
-                <th>分类</th>
-                <th>操作</th>
-                <th>删除</th>
+                <th>Timestamp</th>
+                <th>Protein Family</th>
+                <th>Taxonomy</th>
+                <th>Actions</th>
+                <th>Delete</th>
             </tr>
             <?php foreach ($results as $row): ?>
             <tr>
@@ -85,26 +85,26 @@ try {
                 <td><?= htmlspecialchars($row['taxonomy']) ?></td>
                 <td>
                     <?php if (!empty($row['fasta_file'])): ?>
-                        <a href="<?= htmlspecialchars($row['fasta_file']) ?>">FASTA 序列</a><br>
+                        <a href="<?= htmlspecialchars($row['fasta_file']) ?>">FASTA Sequence</a><br>
                     <?php endif; ?>
                     <?php if (!empty($row['patterns_file'])): ?>
-                        <a href="<?= htmlspecialchars($row['patterns_file']) ?>">模式扫描结果</a><br>
+                        <a href="<?= htmlspecialchars($row['patterns_file']) ?>">Pattern Scan Results</a><br>
                     <?php endif; ?>
                     <?php if (!empty($row['plotcon_file'])): ?>
-                        <a href="<?= htmlspecialchars($row['plotcon_file']) ?>">保守性分析图</a><br>
+                        <a href="<?= htmlspecialchars($row['plotcon_file']) ?>">Conservation Analysis Plot</a><br>
                     <?php endif; ?>
                     <?php if (!empty($row['aligned_file'])): ?>
-                        <a href="<?= htmlspecialchars($row['aligned_file']) ?>">多序列比对结果</a><br>
+                        <a href="<?= htmlspecialchars($row['aligned_file']) ?>">Multiple Sequence Alignment Results</a><br>
                     <?php endif; ?>
                     <?php if (!empty($row['similarity_matrix'])): ?>
-                        <a href="<?= htmlspecialchars($row['similarity_matrix']) ?>">相似性矩阵</a><br>
+                        <a href="<?= htmlspecialchars($row['similarity_matrix']) ?>">Similarity Matrix</a><br>
                     <?php endif; ?>
                     <?php if (!empty($row['heatmap_file'])): ?>
-                        <a href="<?= htmlspecialchars($row['heatmap_file']) ?>">相似性热图</a>
+                        <a href="<?= htmlspecialchars($row['heatmap_file']) ?>">Similarity Heatmap</a>
                     <?php endif; ?>
                 </td>
                 <td>
-                    <button onclick="confirmDelete('<?= $table ?>', <?= $row['id'] ?>)">删除</button>
+                    <button onclick="confirmDelete('<?= $table ?>', <?= $row['id'] ?>)">Delete</button>
                 </td>
             </tr>
             <?php endforeach; ?>

@@ -1,47 +1,62 @@
-<?php
-// 引入数据库配置
+<?php 
+// Include database configuration
 include(__DIR__ . '/config/config.php');
 include(__DIR__ . '/config2.php');
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // 获取用户粘贴的FASTA序列
+    // Retrieve the user-pasted FASTA sequence
     $fasta_sequence = trim($_POST['fasta_sequence']);
     
-    // 将FASTA序列保存到临时文件
+    // Save the FASTA sequence to a temporary file
     $data_dir = __DIR__ . '/data';
     if (!is_dir($data_dir)) {
         mkdir($data_dir, 0755, true);
     }
 
-    // 生成唯一文件名
+    // Generate a unique filename
     $fasta_filename = 'similarity_' . session_id() . '_' . time() . '.fasta';
     $fasta_path = $data_dir . '/' . $fasta_filename;
     file_put_contents($fasta_path, $fasta_sequence);
 
-    // 构造命令，追加 2>&1 捕获标准错误
-    $command = "$PYTHON_EXE " . __DIR__ . "/scripts/generate_similarity_matrix.py $fasta_path 2>&1";
+    // Check if the file exists
+    if (!file_exists($fasta_path)) {
+        echo "<p>FASTA file not found: $fasta_path</p>";
+        exit();
+    }
 
-    // 输出调试信息（便于排查问题）
-    echo "<html><head><title>Similarity Matrix and Heatmap Results</title></head><body>";
-    echo "<h2>Similarity Matrix and Heatmap Results</h2>";
-    echo "<p><strong>Debug Info:</strong></p>";
-    echo "<p>Python executable: " . htmlspecialchars($PYTHON_EXE) . "</p>";
-    echo "<p>Python script: " . htmlspecialchars(__DIR__ . "/scripts/generate_similarity_matrix.py") . "</p>";
-    echo "<p>Command: " . htmlspecialchars($command) . "</p>";
+    // Set environment variable
+    putenv('MPLCONFIGDIR=/tmp/matplotlib');
 
-    // 执行命令并捕获返回信息
+    // Construct the command, appending 2>&1 to capture standard errors
+    $command = "python3 " . __DIR__ . "/scripts/generate_similarity_matrix.py $fasta_path 2>&1";
+
+    // Execute the command and capture output
     exec($command, $output, $return_var);
 
-    echo "<p>Return Code: " . $return_var . "</p>";
-    echo "<h3>Execution Log:</h3>";
-    echo "<pre>";
-    foreach ($output as $line) {
-        echo htmlspecialchars($line) . "\n";
-    }
-    echo "</pre>";
+    echo "<html><head><title>Similarity Matrix and Heatmap Results</title>";
+    echo "<style>
+            body { font-family: Arial, sans-serif; background: #f7f9fc; padding: 20px; }
+            h2 { color: #1E3D7B; font-size: 32px; text-align: center; }
+            .result { text-align: center; margin-top: 30px; }
+            .result p { font-size: 18px; }
+            .button { 
+                background-color: #1E3D7B; 
+                color: white; 
+                padding: 10px 20px; 
+                font-size: 18px; 
+                border: none; 
+                border-radius: 6px; 
+                cursor: pointer;
+                text-decoration: none; 
+                margin-top: 20px;
+            }
+            .button:hover { background-color: #3f5c9d; }
+          </style>";
+    echo "</head><body>";
+    echo "<h2>Similarity Matrix and Heatmap Results</h2>";
 
-    // 定义硬编码的目录和构造文件路径
+    // Define hardcoded directory and construct file paths
     $data_dir_abs = "/home/s2682415/public_html/Website/data";
     $temp_base = basename($fasta_path);
     $root = pathinfo($temp_base, PATHINFO_FILENAME);
@@ -50,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $similarity_matrix_url = "data/{$root}_similarity.mat";
     $heatmap_file_url = "data/{$root}_similarity_heatmap.png";
 
-    // 确保 fasta_file_url 是一个有效的路径
+    // Ensure fasta_file_url is a valid path
     $fasta_file_url = 'data/' . $fasta_filename;
 
     if ($return_var === 0) {
@@ -60,18 +75,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo file_exists($heatmap_file_abs) ? "<li><a href='$heatmap_file_url' target='_blank'>Similarity Heatmap</a></li>" : "<li>Similarity Heatmap file not found.</li>";
         echo "</ul>";
 
-        // 将分析记录保存到数据库中
+        // Save analysis records to the database
         $analysis_log = implode("\n", $output);
         try {
-            // 插入到 generate_similarity_matrix_results 表
+            // Insert into generate_similarity_matrix_results table
             $sql = "INSERT INTO generate_similarity_matrix_results (similarity_matrix, heatmap_file, analysis_log, created_at, user_id, session_id, fasta_file)
                     VALUES (:similarity_matrix, :heatmap_file, :analysis_log, NOW(), :user_id, :session_id, :fasta_file)";
             $stmt = $pdo->prepare($sql);
             
-            // 如果用户登录，则设置 user_id，否则设置为 NULL
+            // Set user_id if the user is logged in, otherwise set it to NULL
             $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
             
-            // 获取当前会话ID
+            // Get the current session ID
             $session_id = session_id();
             
             $stmt->execute([
@@ -88,10 +103,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else {
         echo "<h2>Error occurred during analysis</h2>";
-        echo "<p>Please check the above log for details.</p>";
+        echo "<p>Please check the log above for details.</p>";
     }
 
-    echo "<p><a href='index2.php'>Return to Home</a></p>";
+    echo "<div class='result'><a href='index2.php' class='button'>Return to Home</a></div>";
     echo "</body></html>";
 } else {
     header("Location: index2.php");

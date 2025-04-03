@@ -1,27 +1,27 @@
-/* ========== 全局基础样式 ========== */
+/* ========== Global Basic Styles ========== */
 html, body {
     margin: 0;
     padding: 0;
     font-family: "Helvetica Neue", Arial, sans-serif;
-    background: linear-gradient(160deg, #eaf0f6 0%, #f7f9fc 100%); /* 淡色渐变背景 */
+    background: linear-gradient(160deg, #eaf0f6 0%, #f7f9fc 100%); /* Light gradient background */
     color: #333;
     line-height: 1.6;
 }
 
-/* ========== 顶部标题 ========== */
+/* ========== Top Title ========== */
 h2 {
     margin: 0;
     padding: 20px 0;
     text-align: center;
-    background-color: #1E3D7B; /* 深蓝色背景 */
+    background-color: #1E3D7B; /* Dark blue background */
     color: #fff;
     font-weight: 600;
-    font-size: 26px; /* 字体变大 */
+    font-size: 26px; /* Larger font size */
     letter-spacing: 1px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* ========== 导航栏 ========== */
+/* ========== Navigation Bar ========== */
 nav {
     display: flex;
     justify-content: center;
@@ -32,10 +32,10 @@ nav {
 }
 
 nav a {
-    color: #1E3D7B;      /* 深蓝色文字 */
+    color: #1E3D7B;      /* Dark blue text */
     text-decoration: none;
     margin: 0 15px;
-    font-size: 16px;     /* 导航字体稍大 */
+    font-size: 16px;     /* Slightly larger font size for navigation */
     font-weight: 500;
     transition: color 0.3s;
 }
@@ -44,14 +44,14 @@ nav a:hover {
     color: #3f5c9d;
 }
 
-/* ========== 分割线美化 ========== */
+/* ========== Styled Divider ========== */
 hr {
     border: none;
     border-top: 1px solid #ddd;
     margin: 0;
 }
 
-/* ========== 主体内容容器 ========== */
+/* ========== Main Content Container ========== */
 .main-container {
     width: 90%;
     max-width: 1000px;
@@ -62,7 +62,7 @@ hr {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* ========== 表单区域 ========== */
+/* ========== Form Area ========== */
 form {
     margin-bottom: 30px;
 }
@@ -76,7 +76,7 @@ form input[type="email"] {
     margin: 10px 0 20px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 16px; /* 字体变大 */
+    font-size: 16px; /* Larger font size */
 }
 
 form button[type="submit"] {
@@ -94,27 +94,27 @@ form button[type="submit"]:hover {
     background-color: #2c4e9e;
 }
 
-/* ========== 小标题与说明文字 ========== */
+/* ========== Subtitles and Descriptive Text ========== */
 h3 {
     margin-top: 0;
-    font-size: 20px; /* 字体变大 */
+    font-size: 20px; /* Larger font size */
     color: #1E3D7B;
 }
 
 p {
-    font-size: 16px; /* 字体变大 */
+    font-size: 16px; /* Larger font size */
     margin-bottom: 20px;
 }
 
-/* ========== 分析步骤区（按钮化） ========== */
-/* 将 ul 改造成水平按钮组的外观 */
+/* ========== Analysis Steps Area (Button Style) ========== */
+/* Turn ul into a horizontal button group appearance */
 ul {
     list-style: none;
     padding: 0;
     margin: 0;
-    display: flex;               /* 水平排列 */
-    flex-wrap: wrap;             /* 超出换行 */
-    gap: 15px;                   /* 按钮间距 */
+    display: flex;               /* Horizontal layout */
+    flex-wrap: wrap;             /* Wrap if it exceeds */
+    gap: 15px;                   /* Button spacing */
 }
 
 ul li {
@@ -128,7 +128,7 @@ ul li a {
     color: #fff;
     border-radius: 4px;
     text-decoration: none;
-    font-size: 16px;             /* 字体变大 */
+    font-size: 16px;             /* Larger font size */
     font-weight: 500;
     transition: background-color 0.3s;
 }
@@ -137,7 +137,7 @@ ul li a:hover {
     background-color: #2c4e9e;
 }
 
-/* ========== 页脚 ========== */
+/* ========== Footer ========== */
 footer {
     margin-top: 30px;
     text-align: center;
@@ -168,20 +168,20 @@ footer a:hover {
     color: #1E3D7B;
 }
 
-/* ========== 响应式适配 ========== */
+/* ========== Responsive Adaptation ========== */
 @media (max-width: 768px) {
-    /* 导航栏链接间距减少 */
+    /* Reduce the spacing between navigation links */
     nav a {
         margin: 0 8px;
     }
     
-    /* 表单输入框宽度自适应 */
+    /* Form input width adapts */
     form input[type="text"],
     form input[type="email"] {
         max-width: 100%;
     }
     
-    /* 分析步骤按钮组在小屏幕上下堆叠 */
+    /* Analysis step button group stacks vertically on small screens */
     ul {
         justify-content: center;
     }

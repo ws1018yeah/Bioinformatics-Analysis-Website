@@ -6,30 +6,30 @@ try {
     $results = [];
     
     if (isset($_SESSION['user_id'])) {
-        // 如果用户登录，查询 user_id 对应的记录
+        // If the user is logged in, query records corresponding to user_id
         $stmt = $pdo->prepare("SELECT * FROM pattern_scan_results WHERE user_id = ? ORDER BY created_at DESC");
         $stmt->execute([$_SESSION['user_id']]);
         $results = $stmt->fetchAll();
     } else {
-        // 如果用户未登录，查询 session_id 对应的记录
+        // If the user is not logged in, query records corresponding to session_id
         $stmt = $pdo->prepare("SELECT * FROM pattern_scan_results WHERE session_id = ? ORDER BY created_at DESC");
         $stmt->execute([session_id()]);
         $results = $stmt->fetchAll();
     }
 } catch (PDOException $e) {
-    die("数据库错误: " . $e->getMessage());
+    die("Database error: " . $e->getMessage());
 }
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>模式扫描记录</title>
+    <title>Pattern Scan Records</title>
     <link rel="stylesheet" href="assets/css/style3.css">
     <script>
         function confirmDelete(table, id) {
-            if (confirm("确定要删除这条记录吗？")) {
-                // 用户确认删除，提交表单
+            if (confirm("Are you sure you want to delete this record?")) {
+                // User confirms deletion, submit the form
                 var form = document.createElement('form');
                 form.action = 'delete_record.php';
                 form.method = 'POST';
@@ -54,42 +54,42 @@ try {
     </script>
 </head>
 <body>
-    <h2>模式扫描记录</h2>
+    <h2>Pattern Scan Records</h2>
     
     <div class="div-button-container">
-        <a href="view_results2.php">返回所有分析记录</a>
-        <a href="index2.php">返回主页</a>
+        <a href="view_results2.php">Back to All Analysis Records</a>
+        <a href="index2.php">Back to Homepage</a>
     </div>
 
     <?php if (empty($results)): ?>
-        <p>没有找到模式扫描记录<?php if (!isset($_SESSION['user_id'])) echo "，请登录后查看账户记录"; ?></p>
+        <p>No pattern scan records found<?php if (!isset($_SESSION['user_id'])) echo ", please log in to view account records"; ?></p>
     <?php else: ?>
         <table>
             <tr>
-                <th>时间</th>
-                <th>FASTA 序列</th>
-                <th>模式扫描结果</th>
-                <th>操作</th>
+                <th>Time</th>
+                <th>FASTA Sequence</th>
+                <th>Pattern Scan Results</th>
+                <th>Action</th>
             </tr>
             <?php foreach ($results as $row): ?>
             <tr>
                 <td><?= htmlspecialchars($row['created_at']) ?></td>
                 <td>
                     <?php if (!empty($row['fasta_file'])): ?>
-                        <a href="<?= htmlspecialchars($row['fasta_file']) ?>" target="_blank">FASTA 序列</a>
+                        <a href="<?= htmlspecialchars($row['fasta_file']) ?>" target="_blank">FASTA Sequence</a>
                     <?php else: ?>
-                        <span>FASTA 序列未提供</span>
+                        <span>FASTA Sequence not provided</span>
                     <?php endif; ?>
                 </td>
                 <td>
                     <?php if (!empty($row['patterns_file'])): ?>
-                        <a href="<?= htmlspecialchars($row['patterns_file']) ?>" target="_blank">模式扫描结果</a>
+                        <a href="<?= htmlspecialchars($row['patterns_file']) ?>" target="_blank">Pattern Scan Results</a>
                     <?php else: ?>
-                        <span>模式扫描结果未提供</span>
+                        <span>Pattern Scan Results not provided</span>
                     <?php endif; ?>
                 </td>
                 <td>
-                    <button onclick="confirmDelete('pattern_scan_results', <?= $row['id'] ?>)">删除</button>
+                    <button onclick="confirmDelete('pattern_scan_results', <?= $row['id'] ?>)">Delete</button>
                 </td>
             </tr>
             <?php endforeach; ?>

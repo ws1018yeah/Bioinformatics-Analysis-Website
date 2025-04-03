@@ -1,4 +1,4 @@
-<?php
+<?php 
 session_start();
 include(__DIR__ . '/config/config.php');
 
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: index2.php");
             exit();
         } else {
-            throw new Exception("邮箱或密码错误");
+            throw new Exception("Incorrect email or password");
         }
     } catch (Exception $e) {
         $error = $e->getMessage();
@@ -28,26 +28,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>登录</title>
+    <title>Login</title>
     <link rel="stylesheet" href="assets/css/style4.css">
 </head>
 <body>
     <div class="login-container">
-        <div class="form-wrapper"> <!-- 新增表单容器 -->
-            <h2>用户登录</h2>
+        <div class="form-wrapper"> <!-- New form container -->
+            <h2>User Login</h2>
             <?php if(isset($error)) echo "<p class='error'>$error</p>"; ?>
             <form method="post">
                 <div class="form-group">
-                    <label for="email">邮箱：</label>
+                    <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">密码：</label>
+                    <label for="password">Password:</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                <button type="submit">登录</button>
+                <button type="submit">Login</button>
             </form>
-            <p class="register-link">还没有账户？ <a href="register.php">立即注册</a></p>
+            <p class="register-link">Don't have an account? <a href="register.php">Register now</a></p>
         </div>
     </div>
 </body>
